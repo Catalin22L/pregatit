@@ -22,8 +22,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             PretatitTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
+
+
+
                     Greeting(
-                        name = "Android",
+                        text = "Android",
                         modifier = Modifier
                             .padding(innerPadding)
                             .padding(start = 25.dp, top = 25.dp)
@@ -35,9 +39,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Greeting(text: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "Hello $text!",
         modifier = modifier,
         fontSize = 40.sp
     )
