@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.globant.pretatit"
+    namespace = "com.globant.module2"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.globant.pretatit"
+        applicationId = "com.globant.module2"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -41,7 +41,6 @@ android {
 
 dependencies {
 
-    implementation(project(":mylibrary"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
