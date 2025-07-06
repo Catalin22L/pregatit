@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">pretatit</string>
+    <string name="create_task_title">Create new task</string>
+    <string name="your_task_list_title">Your task list</string>
 </resources>

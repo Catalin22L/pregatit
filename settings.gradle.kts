@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "pregatit"
 include(":app")
- 
+include(":mylibrary")
