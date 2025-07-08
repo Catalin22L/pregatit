@@ -2,4 +2,9 @@
     <string name="app_name">pretatit</string>
     <string name="create_task_title">Create new task</string>
     <string name="your_task_list_title">Your task list</string>
+
+    <string name="task_list_create_task_description">Create Task Button</string>
+    <string name="task_list_create_task_back_description">Go back from Create Task Screen</string>
+    <string name="task_list_save_task_description">Save task</string>
+
 </resources>
