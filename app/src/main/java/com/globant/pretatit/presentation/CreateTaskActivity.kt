@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,9 +33,10 @@ import androidx.compose.ui.unit.sp
 import com.globant.pretatit.R
 import com.globant.pretatit.components.SimpleDropdown
 import com.globant.pretatit.presentation.theme.PretatitTheme
-import timber.log.Timber
 
 class CreateTaskActivity : ComponentActivity() {
+
+    private var task: Task = Task("", "", TaskPriority.NONE)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +52,12 @@ class CreateTaskActivity : ComponentActivity() {
                             navigateWithResult()
                         })
                     }) { padding ->
+                    ScreenContent(Modifier.padding(padding))
                 }
             }
         }
     }
+
     private fun navigateBack() {
         finish()
     }
@@ -68,6 +69,84 @@ class CreateTaskActivity : ComponentActivity() {
 
         finish()
     }
+
+    @Composable
+    private fun ScreenContent(modifier: Modifier) {
+        Column(modifier) {
+            TextAndEditText(
+                stringResource(R.string.create_task_task_title),
+                stringResource(R.string.create_task_enter_task)
+            ) { newValue ->
+                task = task.copy(title = newValue)
+            }
+
+            Spacer(Modifier.size(20.dp))
+
+            TextAndEditText(
+                stringResource(R.string.create_task_task_description),
+                stringResource(R.string.create_task_task_enter_description)
+            )
+            { newValue ->
+                task = task.copy(description = newValue)
+            }
+
+            Spacer(Modifier.size(20.dp))
+
+            ShowTaskPriority()
+        }
+    }
+
+    @Composable
+    private fun TextAndEditText(
+        textString: String,
+        editTextLabel: String,
+        onValueChanged: (String) -> Unit
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.size(20.dp))
+            Text(text = textString, fontSize = 20.sp)
+            Spacer(Modifier.size(20.dp))
+            EditText(label = editTextLabel, { newValue -> onValueChanged(newValue) })
+            Spacer(Modifier.size(20.dp))
+        }
+    }
+
+    @Composable
+    private fun ShowTaskPriority() {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.size(20.dp))
+            Text(stringResource(R.string.create_task_task_priority), fontSize = 20.sp)
+            Spacer(Modifier.size(20.dp))
+            SimpleDropdown(TaskPriority.toListOfStrings()) { newValue ->
+                val newTaskPriority = TaskPriority.getValueByName(newValue)
+                task = task.copy(taskPriority = newTaskPriority)
+            }
+        }
+    }
+
+    @Composable
+    private fun EditText(label: String, onValueChanged: (String) -> Unit) {
+        var text: String by remember { mutableStateOf("") }
+
+        OutlinedTextField(
+            singleLine = true,
+            value = text,
+            onValueChange = {
+                text = it
+                onValueChanged(text)
+            },
+            label = { Text(label, fontSize = 20.sp) }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateListTopAppBar(navAction: () -> Unit, actionAction: () -> Unit) {

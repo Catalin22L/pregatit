@@ -7,10 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,21 +28,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.globant.pretatit.R
 import com.globant.pretatit.presentation.theme.PretatitTheme
 import timber.log.Timber
+import kotlin.collections.mutableListOf
 
 const val CREATE_TASK_RESULT = "create.task.result"
 
 class TaskListActivity : ComponentActivity() {
 
+    private val taskList = mutableListOf<Task>(
+        Task("Feed the cat", "It likes to eat mice!", TaskPriority.HIGH),
+        Task("Feed the dog", "It likes to eat mice!", TaskPriority.HIGH),
+        Task("Feed the hamster", "It likes to eat mice!", TaskPriority.HIGH),
+    )
+
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                Timber.d("${result.data?.getStringExtra(CREATE_TASK_RESULT)}")
+                val newTask = result.data?.getSerializableExtra(CREATE_TASK_RESULT) as Task
+                taskList.add(newTask)
+                Timber.d("result: $newTask")
             }
         }
 
@@ -60,13 +66,14 @@ class TaskListActivity : ComponentActivity() {
                         TaskListTopAppBar {
                             startCreateActivityForResult()
                         }
-                    }) { paddingValue ->
-                    // content
+                    }
+                ) { paddingValue ->
 
-                    // Display a button if there are not tasks in the list
-                    // When clicked the button will open CreateTaskActivity for result
+                    ScreenContent(
+                        Modifier.padding(paddingValue),
+                        createTaskButtonClick = { startCreateActivityForResult() }
+                    )
                 }
-
             }
         }
     }
@@ -77,6 +84,7 @@ class TaskListActivity : ComponentActivity() {
         )
         launcher.launch(intent)
     }
+
     @Composable
     private fun ScreenContent(modifier: Modifier, createTaskButtonClick: () -> Unit) {
         Box(modifier) {
@@ -102,6 +110,48 @@ class TaskListActivity : ComponentActivity() {
                 text = stringResource(R.string.create_task_title),
                 fontSize = 20.sp
             )
+        }
+    }
+
+    @Composable
+    private fun ShowList() {
+        Timber.d("ShowList()")
+
+        LazyColumn {
+            items(taskList.size) { index ->
+                ShowTaskElement(taskList[index])
+            }
+        }
+    }
+
+    @Composable
+    private fun ShowTaskElement(task: Task) {
+        Timber.d("ShowTaskElement(task : $task)")
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+
+            elevation = CardDefaults.cardElevation(6.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.purple_200))
+                    .padding(20.dp)
+
+            ) {
+                Text(text = task.title, fontSize = 30.sp)
+                Text(text = task.description)
+                Text(
+                    text = task.taskPriority.name,
+                    fontSize = 25.sp,
+                    modifier = Modifier.align(
+                        Alignment.End
+                    )
+                )
+            }
         }
     }
 }
