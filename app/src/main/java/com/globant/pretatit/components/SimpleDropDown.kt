@@ -14,13 +14,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SimpleDropdown(options: List<String>, onValueChanged: (String) -> Unit) {
+fun SimpleDropdown(
+    options: List<String>,
+    selectedValue: String,
+    onValueChanged: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf(options[0]) }
 
     Box(modifier = Modifier.wrapContentSize()) {
         Button(onClick = { expanded = true }) {
-            Text(selectedOption)
+            Text(selectedValue)
         }
 
         DropdownMenu(
@@ -31,10 +34,8 @@ fun SimpleDropdown(options: List<String>, onValueChanged: (String) -> Unit) {
                 DropdownMenuItem(
                     text = { Text(label) },
                     onClick = {
-                        selectedOption = label
                         expanded = false
-
-                        onValueChanged(selectedOption)
+                        onValueChanged(label)
                     }
                 )
             }

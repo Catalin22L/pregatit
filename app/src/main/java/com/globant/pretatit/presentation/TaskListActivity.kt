@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.globant.pretatit.presentation
 
 import android.content.Intent
@@ -41,7 +39,7 @@ const val CREATE_TASK_RESULT = "create.task.result"
 
 class TaskListActivity : ComponentActivity() {
 
-    private val taskList = mutableListOf(
+    private val taskList = mutableListOf<Task>(
         Task("Feed the cat", "It likes to eat mice!", TaskPriority.HIGH),
         Task("Feed the dog", "It likes to eat mice!", TaskPriority.HIGH),
         Task("Feed the hamster", "It likes to eat mice!", TaskPriority.HIGH),
