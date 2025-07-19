@@ -1,4 +1,4 @@
-package com.globant.pretatit.ui.theme
+package com.globant.pretatit.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
