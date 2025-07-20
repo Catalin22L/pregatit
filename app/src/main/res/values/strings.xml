@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">pretatit</string>
+    <string name="create_task_title" />
 </resources>

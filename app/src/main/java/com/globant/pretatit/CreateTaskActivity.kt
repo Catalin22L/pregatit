@@ -1,7 +1,6 @@
 package com.globant.pretatit
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.globant.pretatit.ui.theme.PretatitTheme
+import com.globant.pretatit.presentation.theme.PretatitTheme
+
 
 class CreateTaskActivity : ComponentActivity() {
 
@@ -55,7 +55,7 @@ private fun TopBar(onBackButton : ()-> Unit) {
         navigationIcon = {
             IconButton(onClick = {
                 onBackButton()
-                Log.d("MainActivity", "BackButton has been pressed!")
+                Timber.tag("MainActivity").d("BackButton has been pressed!")
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
