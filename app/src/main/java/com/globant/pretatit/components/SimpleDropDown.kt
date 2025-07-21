@@ -1,41 +1,40 @@
-package com.globant.pretatit.components
+package com.globant.pretatit.components // Asigură-te că pachetul este corect
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
 fun SimpleDropdown(
-    options: List<String>,
+    items: List<String>,
     selectedValue: String,
-    onValueChanged: (String) -> Unit
+    onValueChange: (String) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.wrapContentSize()) {
-        Button(onClick = { expanded = true }) {
-            Text(selectedValue)
+    Box(
+        modifier = Modifier.wrapContentSize(Alignment.TopStart)
+    ) {
+        TextButton(onClick = { isExpanded = true }) {
+            Text(text = selectedValue)
         }
 
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
         ) {
-            options.forEach { label ->
+            items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(label) },
+                    text = { Text(text = item) },
                     onClick = {
-                        expanded = false
-                        onValueChanged(label)
+                        isExpanded = false
+                        onValueChange(item)
                     }
                 )
             }

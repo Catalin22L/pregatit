@@ -1,17 +1,22 @@
-package com.globant.pretatit.data.datasource.local.db
+package com.globant.pretatit.data.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.globant.pretatit.data.TaskEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    // Returnează un Flow pentru a observa schimbările în timp real
+    @Query("SELECT * FROM tasks")
+    fun getAllTasks(): Flow<List<TaskEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity)
 
-    @Query("SELECT * FROM tasks")
-    suspend fun getAllTasks(): List<TaskEntity>
+    @Update
+    suspend fun updateTask(task: TaskEntity)
+
+    @Delete
+    suspend fun deleteTask(task: TaskEntity)
 }

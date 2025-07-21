@@ -13,8 +13,9 @@ sealed class Result<out R, out E> {
             is Error -> errorFlow(this.error)
         }
     }
-}
 
-sealed class Failure {
-    data object SomethingWentWrong : Failure()
+    sealed class Failure {
+        object DatabaseError : Failure()
+        // Aici poți adăuga și alte tipuri de erori pe viitor
+    }
 }

@@ -1,73 +1,64 @@
 package com.globant.pretatit.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.globant.pretatit.domain.GetAllTasksUseCase
+import androidx.lifecycle.viewModelScope
+import com.globant.pretatit.domain.TaskRepository
+import com.globant.pretatit.domain.repos.TaskRepository
 import com.globant.pretatit.presentation.Task
-import com.globant.pretatit.presentation.TaskPriority
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
+import javax.inject.Inject
 
-private val INITIAL_TASK_LIST = mutableListOf<Task>(
-    Task("Feed the cat", "It likes to eat mice!", TaskPriority.HIGH),
-    Task("Feed the dog", "It likes to eat mice!", TaskPriority.LOW),
-    Task("Feed the hamster", "It likes to eat mice!", TaskPriority.URGENT),
-)
-
-class TaskListViewModel(
-    private val getAllTasksUseCase: GetAllTasksUseCase,
+@HiltViewModel // Asigură-te că folosești Hilt pentru a injecta repository-ul
+class TaskListViewModel @Inject constructor(
+    private val repository: TaskRepository
 ) : ViewModel() {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    // Starea care va fi expusă către UI
+    private val _tasks = MutableStateFlow<List<Task>>(emptyList())
+    val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
 
-    private val _taskList = MutableStateFlow<MutableList<Task>>(INITIAL_TASK_LIST)
-    val taskList: StateFlow<List<Task>> = _taskList
-
-    fun init() {
-        coroutineScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                getAllTasksUseCase.invoke(Unit)
-            }
-
-            result.handleResult(
-                {
-                    _taskList.value = it.toMutableList()
-                },
-                {
-                    Timber.w("Something went wrong when reading from the disk...")
+    init {
+        // La inițializare, începem să colectăm datele din repository
+        viewModelScope.launch {
+            repository.getTasks()
+                .catch { e ->
+                    // Aici poți gestiona erorile, de ex. afișând un mesaj
+                    e.printStackTrace()
                 }
-            )
+                .collect { taskList ->
+                    // Când primim o listă nouă, o sortăm și actualizăm starea
+                    _tasks.value = taskList.sortedWith(compareBy({ it.isDone }, { it.taskPriority }))
+                }
         }
-    }
-
-    fun sortByPriority() {
-        _taskList.value = _taskList.value.sortedBy { it.taskPriority.ordinal }.toMutableList()
     }
 
     fun addTask(task: Task) {
-        _taskList.value =
-            _taskList.value.apply { add(task) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        coroutineScope.cancel()
-    }
-}
-
-class TaskViewModelFactory(private val getAllTasksUseCase: GetAllTasksUseCase) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TaskListViewModel::class.java)) {
-            return TaskListViewModel(getAllTasksUseCase) as T
+        viewModelScope.launch {
+            repository.saveTask(task)
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+
+    fun deleteTask(taskId: Int) {
+        viewModelScope.launch {
+            // Găsim task-ul după ID pentru a-l putea șterge
+            val taskToDelete = _tasks.value.find { it.id == taskId }
+            taskToDelete?.let {
+                repository.deleteTask(it)
+            }
+        }
+    }
+
+    fun toggleTaskDone(taskId: Int, isDone: Boolean) {
+        viewModelScope.launch {
+            val taskToUpdate = _tasks.value.find { it.id == taskId }
+            taskToUpdate?.let {
+                repository.updateTask(it.copy(isDone = isDone))
+            }
+        }
     }
 }

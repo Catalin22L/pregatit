@@ -1,50 +1,34 @@
 package com.globant.pretatit.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.globant.pretatit.domain.CreateTaskUseCase
+import com.globant.pretatit.domain.model.TaskPriority
 import com.globant.pretatit.presentation.Task
 import com.globant.pretatit.presentation.TaskPriority
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-class CreateTaskViewModel(
-    private val createTaskUseCase: CreateTaskUseCase
-) : ViewModel(
-) {
-    private var task: Task = Task("", "", TaskPriority.NONE)
+class CreateTaskViewModel : ViewModel() {
+
+    private val _taskState = MutableStateFlow(
+        Task(title = "", description = "", taskPriority = TaskPriority.NONE, category = "General")
+    )
+    val taskState = _taskState.asStateFlow()
 
     fun updateTitle(title: String) {
-        task = task.copy(title = title)
+        _taskState.update { it.copy(title = title) }
     }
 
     fun updateDescription(description: String) {
-        task = task.copy(description = description)
+        _taskState.update { it.copy(description = description) }
     }
 
-    fun updatePriority(priority: TaskPriority) {
-        task = task.copy(taskPriority = priority)
+    fun updatePriority(priorityName: String) {
+        val priority = TaskPriority.getValueByName(priorityName)
+        _taskState.update { it.copy(taskPriority = priority) }
     }
 
-    fun createTask(): Task {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                createTaskUseCase(CreateTaskUseCase.Params(task))
-            }
-        }
-
-        return task
-    }
-}
-
-class CreateTaskModelFactory(private val createTaskUseCase: CreateTaskUseCase) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CreateTaskViewModel::class.java)) {
-            return CreateTaskViewModel(createTaskUseCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    fun updateCategory(category: String) {
+        _taskState.update { it.copy(category = category) }
     }
 }

@@ -2,15 +2,15 @@ package com.globant.pretatit.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.globant.pretatit.data.datasource.local.db.TaskPriorityConverter
-import com.globant.pretatit.presentation.TaskPriority
+import com.globant.pretatit.domain.model.TaskPriority // <-- IMPORT NOU
 
 @Entity(tableName = "tasks")
-@TypeConverters(TaskPriorityConverter::class)
 data class TaskEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val title: String,
     val description: String,
-    val taskPriority: TaskPriority
+    val taskPriority: TaskPriority, // Acum folosește modelul din domain
+    val category: String,
+    val isDone: Boolean
 )

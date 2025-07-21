@@ -32,10 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.globant.pretatit.R
 import com.globant.pretatit.presentation.theme.PretatitTheme
+import com.globant.pretatit.domain.model.TaskPriority
 
-class CreateTaskActivity : ComponentActivity() {
+class TaskActivity : ComponentActivity() {
 
-    private var task: Task = Task("", "", TaskPriority.NONE)
+    private var task: Task = Task(title = "", description = "", taskPriority = TaskPriority.NONE)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {

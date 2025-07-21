@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.globant.pretatit.data.TaskEntity
+import com.globant.pretatit.data.database.TaskDao
 import com.globant.pretatit.data.datasource.local.db.TaskDao
 import com.globant.pretatit.data.datasource.local.db.TaskPriorityConverter
 
@@ -14,4 +15,5 @@ import com.globant.pretatit.data.datasource.local.db.TaskPriorityConverter
 abstract class PregatitDatabase : RoomDatabase() {
 
     abstract fun getTaskDAO(): TaskDao
+    abstract fun deleteTask(toEntity: TaskEntity)
 }

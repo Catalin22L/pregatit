@@ -2,174 +2,148 @@
 
 package com.globant.pretatit.presentation
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.globant.pretatit.R
-import com.globant.pretatit.presentation.theme.PretatitTheme
-import timber.log.Timber
-import kotlin.collections.mutableListOf
 
-const val CREATE_TASK_RESULT = "create.task.result"
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import com.globant.pretatit.presentation.theme.PretatitTheme
+import com.globant.pretatit.presentation.viewmodel.TaskListViewModel
 
 class TaskListActivity : ComponentActivity() {
 
-    private val taskList = mutableListOf<Task>(
-        Task("Feed the cat", "It likes to eat mice!", TaskPriority.HIGH),
-        Task("Feed the dog", "It likes to eat mice!", TaskPriority.HIGH),
-        Task("Feed the hamster", "It likes to eat mice!", TaskPriority.HIGH),
-    )
+    private val viewModel: TaskListViewModel by viewModels()
 
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val newTask = result.data?.getSerializableExtra(CREATE_TASK_RESULT) as Task
-                taskList.add(newTask)
-                Timber.d("result: $newTask")
+    // În clasa TaskListActivity
+
+    private val createTaskLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // FOLOSEȘTE ACEST BLOC NOU ȘI SIGUR
+            val task = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Metoda nouă și sigură pentru Parcelable pe Android 13+
+                result.data?.getParcelableExtra(CREATE_TASK_RESULT, Task::class.java)
+            } else {
+                // Metoda veche (deprecated) pentru compatibilitate
+                @Suppress("DEPRECATION")
+                (result.data?.getParcelableExtra(CREATE_TASK_RESULT))
+            }
+
+            task?.let {
+                viewModel.addTask(it)
             }
         }
+    }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         setContent {
             PretatitTheme {
+                // Colectăm lista de task-uri din ViewModel
+                val tasks by viewModel.tasks.collectAsState()
+
                 Scaffold(
-                    topBar = {
-                        TaskListTopAppBar {
-                            startCreateActivityForResult()
+                    topBar = { TopBar() },
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
+                            createTaskLauncher.launch(Intent(this, CreateTaskActivity::class.java))
+                        }) {
+                            Icon(Icons.Default.Add, contentDescription = "Add Task")
                         }
                     }
-                ) { paddingValue ->
-
-                    ScreenContent(
-                        Modifier.padding(paddingValue),
-                        createTaskButtonClick = { startCreateActivityForResult() }
+                ) { padding ->
+                    TaskListScreen(
+                        modifier = Modifier.padding(padding),
+                        tasks = tasks,
+                        onTaskCheckedChange = { task, isChecked ->
+                            viewModel.toggleTaskDone(task.id, isChecked)
+                        },
+                        onDeleteTask = { task ->
+                            viewModel.deleteTask(task.id)
+                        }
                     )
                 }
-            }
-        }
-    }
-
-    private fun startCreateActivityForResult() {
-        val intent = Intent(
-            this@TaskListActivity, CreateTaskActivity::class.java
-        )
-        launcher.launch(intent)
-    }
-
-    @Composable
-    private fun ScreenContent(modifier: Modifier, createTaskButtonClick: () -> Unit) {
-        Box(modifier) {
-            if (taskList.isEmpty()) {
-                ShowEmptyList {
-                    createTaskButtonClick()
-                }
-            } else {
-                ShowList()
-            }
-        }
-    }
-
-    @Composable
-    private fun ShowEmptyList(createTaskButtonClick: () -> Unit) {
-        Timber.d("ShowEmptyList()")
-        Button(
-            onClick = createTaskButtonClick,
-            modifier = Modifier
-                .padding(start = 25.dp, top = 25.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.create_task_title),
-                fontSize = 20.sp
-            )
-        }
-    }
-
-    @Composable
-    private fun ShowList() {
-        Timber.d("ShowList()")
-
-        LazyColumn {
-            items(taskList.size) { index ->
-                ShowTaskElement(taskList[index])
-            }
-        }
-    }
-
-    @Composable
-    private fun ShowTaskElement(task: Task) {
-        Timber.d("ShowTaskElement(task : $task)")
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-
-            elevation = CardDefaults.cardElevation(6.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(R.color.purple_200))
-                    .padding(20.dp)
-
-            ) {
-                Text(text = task.title, fontSize = 30.sp)
-                Text(text = task.description)
-                Text(
-                    text = task.taskPriority.name,
-                    fontSize = 25.sp,
-                    modifier = Modifier.align(
-                        Alignment.End
-                    )
-                )
             }
         }
     }
 }
 
+@Composable
+fun TaskListScreen(
+    modifier: Modifier,
+    tasks: List<Task>,
+    onTaskCheckedChange: (Task, Boolean) -> Unit,
+    onDeleteTask: (Task) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(tasks, key = { it.id }) { task ->
+            TaskItem(
+                task = task,
+                onCheckedChange = { isChecked -> onTaskCheckedChange(task, isChecked) },
+                onDelete = { onDeleteTask(task) }
+            )
+        }
+    }
+}
+
+@Composable
+fun TaskItem(
+    task: Task,
+    onCheckedChange: (Boolean) -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = task.isDone,
+                onCheckedChange = onCheckedChange
+            )
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = task.title,
+                    textDecoration = if (task.isDone) TextDecoration.LineThrough else null
+                )
+                Text(
+                    text = task.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    textDecoration = if (task.isDone) TextDecoration.LineThrough else null
+                )
+            }
+            Spacer(Modifier.width(16.dp))
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TaskListTopAppBar(actionClick: () -> Unit) {
-    TopAppBar(
-        title = { Text(stringResource(R.string.your_task_list_title)) },
-        actions = {
-            IconButton(onClick = actionClick) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.task_list_create_task_description)
-                )
-            }
-        })
+fun TopBar() {
+    TopAppBar(title = { Text("To-Do List") })
 }

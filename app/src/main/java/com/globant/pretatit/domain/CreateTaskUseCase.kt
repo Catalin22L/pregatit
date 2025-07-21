@@ -1,11 +1,11 @@
 package com.globant.pretatit.domain
 
-import com.globant.pretatit.core.Failure
 import com.globant.pretatit.core.Result
 import com.globant.pretatit.core.UseCase
 import com.globant.pretatit.domain.CreateTaskUseCase.Params
 import com.globant.pretatit.domain.repos.TaskRepository
 import com.globant.pretatit.presentation.Task
+import com.globant.pretatit.core.Result.Failure
 
 interface CreateTaskUseCase : UseCase<Params, Unit> {
     data class Params(
