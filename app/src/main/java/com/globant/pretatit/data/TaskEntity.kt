@@ -1,8 +1,8 @@
-package com.globant.pretatit.data
+package com.globant.pretatit.data.database // <-- Aceasta este calea critică!
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.globant.pretatit.domain.model.TaskPriority // <-- IMPORT NOU
+import com.globant.pretatit.domain.model.TaskPriority
 
 @Entity(tableName = "tasks")
 data class TaskEntity(
@@ -10,7 +10,7 @@ data class TaskEntity(
     val id: Int = 0,
     val title: String,
     val description: String,
-    val taskPriority: TaskPriority, // Acum folosește modelul din domain
+    val taskPriority: TaskPriority,
     val category: String,
     val isDone: Boolean
 )

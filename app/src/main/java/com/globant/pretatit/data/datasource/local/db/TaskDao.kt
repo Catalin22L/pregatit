@@ -1,15 +1,12 @@
-package com.globant.pretatit.data.database
+package com.globant.pretatit.data.database // <-- Aceeași cale critică!
 
 import androidx.room.*
-import com.globant.pretatit.data.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
-
-    // Returnează un Flow pentru a observa schimbările în timp real
     @Query("SELECT * FROM tasks")
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    fun getAllTasks(): Flow<List<TaskEntity>> // Acum va găsi TaskEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity)

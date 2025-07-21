@@ -5,7 +5,6 @@ import com.globant.pretatit.data.datasource.mapper.toDomain
 import com.globant.pretatit.data.datasource.mapper.toEntity
 import com.globant.pretatit.core.Result.Failure
 import com.globant.pretatit.data.datasource.local.db.PregatitDatabase
-import com.globant.pretatit.data.datasource.remote.TaskApi
 import com.globant.pretatit.domain.repos.TaskRepository
 import com.globant.pretatit.presentation.Task
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +14,7 @@ import javax.inject.Inject
 
 // Am corectat constructorul pentru a injecta direct DAO-ul
 class TaskRepositoryImpl @Inject constructor(
-    private val taskDao: PregatitDatabase, // <-- INJECTĂM DAO, NU DATABASE
-    create: TaskApi
+    private val taskDao: PregatitDatabase // <-- INJECTĂM DAO, NU DATABASE
 ) : TaskRepository {
 
     override fun getTasks(): Flow<List<Task>> {

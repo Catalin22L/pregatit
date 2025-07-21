@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.globant.pretatit.data.datasource.local.db.PregatitDatabase
 import com.globant.pretatit.data.datasource.local.SharedPreferencesManager
-import com.globant.pretatit.data.datasource.remote.TaskApi
 import com.globant.pretatit.data.repository.TaskRepositoryImpl
 import com.globant.pretatit.domain.repos.TaskRepository
 import com.google.gson.Gson
@@ -27,7 +26,7 @@ object DI {
     }
 
     val taskRepository: TaskRepository by lazy {
-        TaskRepositoryImpl(database, retrofit.create(TaskApi::class.java))
+        TaskRepositoryImpl(database)
     }
 
     val database: PregatitDatabase by lazy {

@@ -1,5 +1,6 @@
 package com.globant.pretatit.data
 
+import com.globant.pretatit.data.database.TaskEntity
 import com.globant.pretatit.presentation.Task
 
 // Transformă un obiect de Bază de Date (Entity) într-un obiect de UI (Domain)

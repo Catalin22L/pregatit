@@ -1,4 +1,4 @@
-package com.globant.pretatit.data.datasource.local.db // Verifică dacă pachetul este corect
+package com.globant.pretatit.data.database.converters // Verifică dacă pachetul este corect
 
 import androidx.room.TypeConverter
 import com.globant.pretatit.domain.model.TaskPriority // <-- IMPORT NOU

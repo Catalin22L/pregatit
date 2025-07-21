@@ -4,5 +4,5 @@ import com.globant.pretatit.presentation.Task
 
 interface UseCase<in I, out R> {
 
-    suspend operator fun invoke(params: I): Result<Unit, Result.Failure>
+    suspend operator fun invoke(params: I): Result<List<Task>, Result.Failure>
 }
