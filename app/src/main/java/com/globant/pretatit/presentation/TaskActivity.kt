@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.globant.pretatit.R
-import com.globant.pretatit.components.SimpleDropdown
 import com.globant.pretatit.presentation.theme.PretatitTheme
 
 class CreateTaskActivity : ComponentActivity() {
@@ -109,14 +108,13 @@ class CreateTaskActivity : ComponentActivity() {
             Spacer(Modifier.size(20.dp))
             Text(text = textString, fontSize = 20.sp)
             Spacer(Modifier.size(20.dp))
-            EditText(label = editTextLabel, { newValue -> onValueChanged(newValue) })
+            EditText(label = editTextLabel) { newValue -> onValueChanged(newValue) }
             Spacer(Modifier.size(20.dp))
         }
     }
 
     @Composable
     private fun ShowTaskPriority() {
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -124,12 +122,9 @@ class CreateTaskActivity : ComponentActivity() {
             Spacer(Modifier.size(20.dp))
             Text(stringResource(R.string.create_task_task_priority), fontSize = 20.sp)
             Spacer(Modifier.size(20.dp))
-            SimpleDropdown(TaskPriority.toListOfStrings()) { newValue ->
-                val newTaskPriority = TaskPriority.getValueByName(newValue)
-                task = task.copy(taskPriority = newTaskPriority)
-            }
         }
     }
+
 
     @Composable
     private fun EditText(label: String, onValueChanged: (String) -> Unit) {

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.globant.pretatit.presentation
 
 import android.content.Intent

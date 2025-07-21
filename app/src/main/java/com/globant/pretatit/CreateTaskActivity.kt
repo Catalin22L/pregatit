@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.globant.pretatit.presentation.theme.PretatitTheme
+import timber.log.Timber
 
 
 class CreateTaskActivity : ComponentActivity() {
@@ -35,33 +36,37 @@ class CreateTaskActivity : ComponentActivity() {
                     },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
-                    Greeting(
-                        text = "Android",
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .padding(start = 25.dp, top = 25.dp)
-                    )
+
+                    @Composable
+                    fun Greeting(text: String, modifier: Modifier = Modifier) {
+                        Text(
+                            text = text,
+                            modifier = modifier
+                                .padding(innerPadding)
+                                .padding(start = 25.dp, top = 25.dp)
+                        )
+                    }
                 }
             }
         }
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(onBackButton : ()-> Unit) {
-    TopAppBar(
-        title = { Text(stringResource(R.string.create_task_title)) },
-        navigationIcon = {
-            IconButton(onClick = {
-                onBackButton()
-                Timber.tag("MainActivity").d("BackButton has been pressed!")
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back"
-                )
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun TopBar(onBackButton: () -> Unit) {
+        TopAppBar(
+            title = { Text(stringResource(R.string.create_task_title)) },
+            navigationIcon = {
+                IconButton(onClick = {
+                    onBackButton()
+                    Timber.tag("MainActivity").d("BackButton has been pressed!")
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
