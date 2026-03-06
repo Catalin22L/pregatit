@@ -2,7 +2,8 @@
 O aplicație Android modernă, intuitivă și eficientă pentru gestionarea sarcinilor zilnice (To-Do List). Acest proiect a fost dezvoltat ca o aplicație de portofoliu, demonstrând implementarea celor mai noi tehnologii și bune practici din ecosistemul Android recomandate de Google.
 
 🚀 Funcționalități Principale (Features)
-Vizualizarea Sarcinilor:O listă curată și interactivă unde sunt afișate toate task-urile. Sarcinile finalizate apar tăiate (strikethrough) pentru o vizualizare rapidă a progresului.
+Vizualizarea Sarcinilor:
+  O listă curată și interactivă unde sunt afișate toate task-urile. Sarcinile finalizate apar tăiate (strikethrough) pentru o vizualizare rapidă a progresului.
   Creare Sarcini Noi:Utilizatorii pot adăuga rapid task-uri noi completând următoarele detalii:
   Titlu și Descriere
   Prioritate:NONE, LOW, MEDIUM, HIGH, URGENT
