@@ -1,3 +1,4 @@
+<img width="128" height="128" alt="image" src="https://github.com/user-attachments/assets/ec59aec1-b20d-43b7-a444-da59d6456ebe" /> Romana
 📝 To-Do List App
 O aplicație Android modernă, intuitivă și eficientă pentru gestionarea sarcinilor zilnice (To-Do List). Acest proiect a fost dezvoltat ca o aplicație de portofoliu, demonstrând implementarea celor mai noi tehnologii și bune practici din ecosistemul Android recomandate de Google.
 
