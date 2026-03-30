@@ -1,4 +1,4 @@
-🇷🇴 Versiunea în Română
+<h1>🇷🇴 Versiunea în Română</h1>
 
 📝 To-Do List App
 O aplicație Android modernă, intuitivă și eficientă pentru gestionarea sarcinilor zilnice (To-Do List). Acest proiect a fost dezvoltat ca o aplicație de portofoliu, demonstrând implementarea celor mai noi tehnologii și bune practici din ecosistemul Android recomandate de Google.
