@@ -1,4 +1,5 @@
 🇷🇴 Versiunea în Română
+
 📝 To-Do List App
 O aplicație Android modernă, intuitivă și eficientă pentru gestionarea sarcinilor zilnice (To-Do List). Acest proiect a fost dezvoltat ca o aplicație de portofoliu, demonstrând implementarea celor mai noi tehnologii și bune practici din ecosistemul Android recomandate de Google.
 
@@ -44,6 +45,7 @@ Domain Layer: Conține logica de business pură, modelele de date (ex: TaskPrior
 Data Layer: Gestionează sursele de date (Room Database, SharedPreferences) și implementează contractele pentru Repository.
 
 🇬🇧 English Version
+
 📝 To-Do List App
 A modern, intuitive, and efficient Android application for managing daily tasks. This project was developed as a portfolio application, demonstrating the implementation of the latest technologies and best practices in the Android ecosystem recommended by Google.
 
